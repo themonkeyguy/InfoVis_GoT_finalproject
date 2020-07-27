@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Game of Thrones: Relations</title>
+    <meta charset="UTF-8">
+    <meta name="description" content="Game of Thrones: Relations - RomaTre - InfoVis Project">
+    <meta name="author" content="Alessandro Aiuti">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="logo">
+      <img src="https://www.logolynx.com/images/logolynx/b1/b106f5584f54b1227cbd74cf73849a7d.png" alt="logo">
+    </div>
+    <svg class="svg"></svg>
+    <svg class="svg2">
+      <g class="lineeagenda" transform="translate(0, 400)">
+        <line x1="-2000" y1="-2000" x2="-1000" y2="-2000" style="stroke:#cc6699;stroke-width:5" />
+        <text x= "-950" y="-1995" style="font:30px sans-serif">killed</text>
+        <text x= "-1500" y="-1990" fill="#996699" style="font:30px sans-serif">➤</text>
+      </g>
+      <g class="lineeagenda" transform="translate(0, 450)">
+        <line x1="-2000" y1="-2000" x2="-1000" y2="-2000" style="stroke:black;stroke-width:5" />
+        <text x= "-950" y="-1995" style="font:30px sans-serif">father</text>
+        <text x= "-1500" y="-1990" fill="black" style="font:30px sans-serif">➤</text>
+      </g>
+      <g class="lineeagenda" transform="translate(0, 500)">
+        <line x1="-2000" y1="-2000" x2="-1000" y2="-2000" style="stroke:black;stroke-width:5;stroke-dasharray:7,5" />
+        <text x= "-950" y="-1995" style="font:30px sans-serif">mother</text>
+        <text x= "-1500" y="-1990" fill="black" style="font:30px sans-serif">➤</text>
+      </g>
+      <g class="lineeagenda" transform="translate(0, 550)">
+        <line x1="-2000" y1="-2000" x2="-1000" y2="-2000" style="stroke:#cc6600;stroke-width:5" />
+        <text x= "-950" y="-1995" style="font:30px sans-serif">spouse</text>
+      </g>
+      <g class="lineeagenda" transform="translate(0, 600)">
+        <line x1="-2000" y1="-2000" x2="-1000" y2="-2000" style="stroke:#cc6600;stroke-width:5;stroke-dasharray:7,5" />
+        <text x= "-950" y="-1995" style="font:30px sans-serif">lover</text>
+      </g>
+      <g class="lineeagenda" transform="translate(0, 650)">
+        <line x1="-2000" y1="-2000" x2="-1000" y2="-2000" style="stroke:#ffcc33;stroke-width:5" />
+        <text x= "-950" y="-1995" style="font:30px sans-serif">allegiance</text>
+      </g>
+      <g class="lineeagenda" transform="translate(0, 700)">
+        <line x1="-2000" y1="-2000" x2="-1000" y2="-2000" style="stroke:#6699cc;stroke-width:5;stroke-dasharray:8,5" />
+        <text x= "-950" y="-1995" style="font:30px sans-serif">sibling</text>
+      </g>
+    </svg>
+
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://d3js.org/d3-selection-multi.v0.4.min.js"></script>
+    <script>
+
+
+//      nodes
+//   // "status", [alive,deceased]
+//   // "image",
+//   // "house-birth",
+//   // "name",
+//   // "id",
+//      link
+//   // ""type", : [biological, dragon, direwolf, hand, kingsguard, oath, pledge, ward]
+//   // "relation" : [sibling, lover, spouse, father, mother, allegiance, killed]
+//   // "target",
+//   // "source",
+
+
+var config = {
+  "title":"Relations",
+  "width":1000,
+  "height":  1000,
+  "viewBox":"-950 -900 2000 2000",
+  "circle":{
+    "r":"700",
+    "style":{
+      "stroke":"white",
+      "stroke-opacity":"0.5",
+      "fill":"none"
+    }
+  },
+  "directed":[
+    {
+      "relation":"killed",
+      "style":{
+        "stroke": "#cc6699", //rosato
+        "stroke-width": 1,
+        "stroke-opacity": 1
+      },
+      "textStyle":{
+        "font-size": "1em",
+        "dominant-baseline": "central"
+      }
+    },
+    {
+      "relation":"father",
+      "style":{
+        "stroke": "black",
+        "stroke-width": 1,
+        "stroke-opacity": 1
+      },
+      "textStyle":{
+        "font-size": "1em",
+        "dominant-baseline": "central"
+      }
+    },
+    {
+      "relation":"mother",
+      "style":{
+        "stroke": "black",  //nero tratteggiato
+        "stroke-width": 1,
+        "stroke-opacity": 1,
+        "stroke-dasharray": "5,5"
+      },
+      "textStyle":{
+        "font-size": "1em",
+        "dominant-baseline": "central"
+      }
+    }
+  ],
+  "undirected":[
+    {
+      "relation":"spouse",
+      "style":{
+        "stroke": "#cc6600", //rossiccio pieno
+        "stroke-width": 2,
+        "stroke-opacity": 1
+      },
+        "textStyle":{
+        "font-size": "1em",
+        "dominant-baseline": "central"
+      }
+    },
+    {
+      "relation":"lover",
+      "style":{
+        "stroke": "#cc6600", //rossiccio tratteggiato
+        "stroke-width": 2,
+        "stroke-opacity": 1,
+        "stroke-dasharray": "5,5"
+      },
+        "textStyle":{
+        "font-size": "1em",
+        "dominant-baseline": "central"
+      }
+    },
+    {
+      "relation":"allegiance",
+      "style":{
+        "stroke": "#ffcc33",  //giallino
+        "stroke-width": 2,
+        "stroke-opacity": 1
+      },
+        "textStyle":{
+        "font-size": "1em",
+        "dominant-baseline": "central"
+      }
+    },
+    {
+      "relation":"sibling",
+      "style":{
+        "stroke": "#6699cc",  //celestino
+        "stroke-width": 2,
+        "stroke-opacity": 1,
+        "stroke-dasharray": "5,3"
+      },
+      "textStyle":{
+        "font-size": "1em",
+        "dominant-baseline": "central"
+      }
+    }
+  ]
+}
+
+var config2 = {
+  "title":"Relations",
+  "width":1000,
+  "height":  1000,
+  "viewBox":"-2000 -2000 2000 2000",
+  }
+
+/* IMPORT DATA */
+d3.queue()
+  .defer(d3.json, 'thebelovedandthedead.json')
+  //.defer(d3.xml, 'got-graph.graphml')
+  .await(ready);
+
+function ready(error, graph) {
+  if (error) throw error;
+  console.log("oh maronn' incoronet'!");
+
+  characters = graph.nodes;
+  relations = graph.links;
+
+  /* CONFIG SETUP */
+  d3.select("svg")
+    .attr("width", config.width)
+    .attr("height", config.height)
+    .attr("viewBox", config.viewBox)
+  .append("g")
+  .append("circle")
+      .attr("r", config.circle.r)
+      .styles(config.circle.style);
+  
+  d3.select(".svg2")
+    .attr("width", config2.width)
+    .attr("height", config2.height)
+    .attr("viewBox", config2.viewBox)
+  /* END CONFIG SETUP */
+
+  var directed = config.directed.map(function(v,i){
+    return v.relation;
+  })
+  var undirected = config.undirected.map(function(v,i){
+    return v.relation;
+  })
+
+  var charactersArray = [];
+  var relationsArray = [];
+  var charactersAlive = []
+  var matrix = {
+    "nodes":[],
+    "links":[]
+  }
+
+  //build an array of characters
+  characters.forEach(function(value, i){
+      charactersArray.push(value.id)
+      if(value.status == "Alive"){
+        charactersAlive.push(value.name)
+      }
+  });
+
+  // modify charactersArray to be objects with image files, plus other info
+  charactersArray.forEach(function(v,i){
+    var index = characters.findIndex(function(element){
+      return element.id == v;
+    });
+    var image = (index > -1 && characters[index].image) ? characters[index].image : null;
+    var name = characters[index].name
+    var status = characters[index].status
+    charactersArray[i] = {
+      "id":charactersArray[i],
+      "name": name,
+      "status": status,
+      "image":image
+    };
+  });
+  
+  charactersArray.forEach
+  // add nodes to matrix
+  matrix.nodes = charactersArray.map(function(val, ind){
+    return {
+      "id":val.id,
+      "name": val.name,
+      "group":1,
+      "status": val.status,
+      "image":val.image,
+      "path":[]
+    }
+  });
+
+  //the real relation
+  relations.forEach(function(rel,i){
+      matrix.links.push({
+          "source": rel.source,
+          "target": rel.target,
+          "relation": rel.relation
+      });
+  });
+
+
+  /* COSTRUIAMO IL CORPO UMANO, QUANTE COSE PUOI IMAPARE... */
+  
+  var svg = d3.select("svg"),
+    width = +svg.attr("width"),
+    height = +svg.attr("height")
+    radius = config.circle.r;
+  var color = d3.scaleOrdinal(d3.schemeCategory20);
+  var w = svg.select("g")
+
+  //https://www.d3indepth.com/force-layout/
+  var simulation = d3.forceSimulation()
+    .force("link", d3.forceLink())
+    .force("r", d3.forceRadial(radius))
+    .force("charge", d3.forceCollide());
+    //.force('collision', d3.forceCollide().radius(5))
+    //.force("charge", d3.forceManyBody())
+    //.force("center", d3.forceCenter(width/2, height/2));
+
+  var nodes = matrix.nodes,
+      nodeById = d3.map(nodes, function(d) { return d.id; }),
+      links = matrix.links,
+      bilinks = [];
+
+  links.forEach(function(link) {
+    var s = link.source = nodeById.get(link.source),
+        t = link.target = nodeById.get(link.target),
+        i = {}, // intermediate node
+        rel = link.relation,
+        id = "path"+Math.floor(100000*Math.random());
+    //nodes.push(i);
+    links.push({source: s, target: i, relation: rel}, {source: i, target: t, relation: rel});
+    //bilink is an array of [source node, intermediate node, target, relation, id(= es path1670)]
+    bilinks.push([s, i, t, rel, id]);
+  });
+  
+  //add all path related with nodes
+  bilinks.forEach(function(lnk, i){
+    nodes.forEach(function(n){
+      if (lnk[0].id === n.id || lnk[2].id === n.id) {
+        n.path.push(lnk[4])
+      }
+    })
+  })
+
+//console.log(nodes)
+// now nodes = group, id, image, index, name, path[], vx,vy,x,y
+//console.dir(links)
+//console.dir(bilinks);
+
+  var link = w.selectAll(".link")
+    .data(bilinks)
+    .enter().append("path")
+      .attr("id", function(d){ return d[4]})
+      .attr("class", function(d){ return "link " + d[3]});
+  // add arrows
+  w.append("text")
+    .attr("id", "arrows");
+
+  //arraw with only directed path  
+  var directedArrow = []
+  bilinks.forEach(function(blnk){
+    directed.forEach(function(rln){
+      if (blnk[3]==rln) {
+        directedArrow.push(blnk[4])
+      }
+    })
+  })
+
+  // for directed link/path: add arrows and set styles
+  for(var i in config.directed){
+    bilinks.forEach(function(value, index){
+      if(bilinks[index][3] == config.directed[0].relation){
+        w.select("#arrows")
+          .append("textPath")
+          .styles(config.directed[i].textStyle)
+          .attr("xlink:xlink:href", function(d){ return "#"+bilinks[index][4]})
+          .attr("text-anchor", "middle")
+          .attr("startOffset", "50%")
+          .attr("opacity", 0.1)
+          .text("➤")
+          .attr("fill", "#996699");
+      }
+      if(bilinks[index][3] == config.directed[1].relation || bilinks[index][3] == config.directed[2].relation){
+        w.select("#arrows")
+          .append("textPath")
+          .styles(config.directed[i].textStyle)
+          .attr("xlink:xlink:href", function(d){ return "#"+bilinks[index][4]})
+          .attr("text-anchor", "middle")
+          .attr("startOffset", "50%")
+          .attr("opacity", 0.1)
+          .text("➤")
+          .attr("fill", "black");
+      }
+    });
+  }
+
+  var arrow = w.selectAll("textPath")
+    .data(directedArrow);
+
+  // check to see if the property is an array, and if so, apply the styles therein
+  [...config.directed, ...config.undirected].forEach(function(val, ind){
+    w.selectAll(`.${val.relation}`)
+    .styles(val.style)
+  })
+
+  /* OPACITY LEVEL IS OVER 9000! */
+
+  var linkedByIndex = {};
+  relations.forEach(function(d) {
+      linkedByIndex[d.source + "," + d.target] = 1;
+  });
+
+  function isConnected(a, b) {
+      return linkedByIndex[a.id + "," + b.id] || linkedByIndex[b.id + "," + a.id] || a.id == b.id;
+  }
+
+  function fade(opacity) {
+    return function(d) {
+      var nome = d3.select(this).select("text.name").text()
+      if(opacity!=1){
+        d3.select(this).select("circle").style("stroke", function(s) {
+          //verdequellolì ifAlive o CrimsonRed ifDead 
+          return charactersAlive.includes(nome) ? "MediumSpringGreen" : "Crimson";
+        })
+      } else {
+        d3.select(this).select("circle").style("stroke", null);
+      }
+        node.style("opacity", function(o) {
+            thisOpacity = isConnected(d, o) ? 1 : opacity;
+            return thisOpacity;
+        });
+        link.style("stroke-opacity", function(o) {
+            return o[0].id === d.id || o[2].id === d.id ? 1 : opacity;
+        });
+        arrow.style("opacity", function(a){
+          return d.path.includes(a) ? 1 : opacity;
+        });
+    };
+  }
+  /* end opacity  */
+
+  var node = w.selectAll(".node")
+    .data(nodes.filter(function(d) { return d.id; }))
+    .enter().append("g")
+      .attr("transform", function(d) { return (d.x && d.y) ? "translate(0,0)" : "translate(0,0)"; })
+      .call(d3.drag()
+          .on("start", dragstarted)
+          .on("drag", dragged)
+          .on("end", dragended))  //; <- se rimuovo .on(mouseo..)
+    .on('mouseover', fade(0.1)) //prova fade
+    .on('mouseout', fade(1));   //prova fade
+
+  function radialPoint(x, y) {
+    var cos = Math.round(Math.cos(x -= Math.PI / 2)*100)/100
+    return [y * cos, y * Math.sin(x)];
+  }
+
+  // console.log(nodes);
+
+  svg.append("defs")
+    .selectAll("defs")
+    .data(nodes.filter(function(d) { return d.id; }))
+    .enter().append("pattern")
+      .attr("id", function(d){ return (d.image) ? d.id : ''; })
+      .attrs({
+        "height": "100%",
+        "width":"100%",
+        "patternContentUnits":"objectBoundingBox",
+        "viewBox":"0 0 1 1",
+        "preserveAspectRatio": "xMidYMid slice"
+      })
+      .append("image")
+        .attrs({
+          "height":"1",
+          "width":"1",
+          "preserveAspectRatio":"xMidYMid slice"
+        })
+        .attr("xlink:xlink:href", function(d){ return d.image; });
+
+  node.append("circle")
+      .attr("class", "node")
+      .attr("fill", function(d){
+        return (d.image) ? "url(#" + d.id + ")" : color(d.group);
+      })
+      .attr("r", 15)
+      .attrs({"stroke": "#000", "stroke-width": "2"});
+
+  //visualize name of character
+  node.append("text")
+      .attr("class", "name")
+      .attr("dy", "0.31em")
+      .text(function(d) { return d.name; });
+
+  simulation
+      .nodes(nodes)
+      .on("tick", ticked);
+
+  simulation.force("link")
+      .strength(0)
+      .links(links);
+
+  simulation.force("r")
+      .strength(1);
+
+  var chargeRadius = radius*Math.sin((radius*2*3.14/matrix.nodes.length)/(2*radius)); //d = 2•r•sin(a/2r)
+  var chargeRadius = Math.round(chargeRadius*100)/100
+  simulation.force("charge")
+      .radius(chargeRadius);
+
+  function ticked() {
+    link.attr("d", positionLink);
+    node.selectAll("text").attr("x", function(d) { return (d.x > 0) ? 20 : -20; })
+    node.attr("transform", positionNode);
+    node.selectAll("text").attr("text-anchor", function(d) { return (d.x > 0) ? "start" : "end"});
+    w.selectAll(".name")
+    //text correct rotation
+    .attr("transform", function(d) { return "rotate(" + 180*Math.atan(d.y/d.x)/3.14 + ")"; })
+  }
+  //draw the line
+  function positionLink(d) {
+    return "M" + Math.round(d[0].x) + "," + Math.round(d[0].y)  //start
+         + "S" + 0 + "," + 0                                    //control point curve
+         + " " + Math.round(d[2].x) + "," + Math.round(d[2].y); //endpoint
+  }
+
+  function positionNode(d) {
+    var x = Math.round(d.x)
+    var y = Math.round(d.y)
+    var rad = Math.round(180*Math.atan(y/x)/3.14)
+    //rotate necessary for text;
+    return "translate(" + x + "," + y + ")";
+  }
+
+  function dragstarted(d) {
+    if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+    d.fx = d.x, d.fy = d.y;
+  }
+
+  function dragged(d) {
+    d.fx = d3.event.x, d.fy = d3.event.y;
+  }
+
+  function dragended(d) {
+    if (!d3.event.active) simulation.alphaTarget(0);
+    d.fx = null, d.fy = null;
+  }
+  
+  const zoom = d3.zoom()
+    .scaleExtent([1, 40])
+    .on("zoom", zoomed);
+
+  w.call(zoom);
+
+  function zoomed() {
+    w.attr("transform", d3.event.transform);
+  }
+
+};
+    </script>
+  </body>
+</html>
